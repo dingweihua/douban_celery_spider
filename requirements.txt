@@ -1,0 +1,7 @@
+-i https://pypi.douban.com/simple
+lxml
+requests
+beautifulsoup4
+redis
+celery
+flower
