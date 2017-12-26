@@ -13,7 +13,7 @@ from tasks.workers import app
 
 
 @app.task()
-def get_movie_detail(douban_id):
+def crawl_movie_detail(douban_id):
     """
     根据电影id获取电影详情信息
     :param douban_id:
@@ -67,3 +67,36 @@ def get_movie_detail(douban_id):
     if imdb_tag:
         movie_detail['imdb'] = imdb_tag.attrs.get('href', '')
     return movie_detail
+
+
+@app.task()
+def crawl_nowplaying():
+    """
+    爬取正在热映的电影
+    :return:
+    """
+    search_url = const.SEARCH_URL
+    res_search = requests.get(
+        search_url,
+        headers=const.HEADERS,
+        proxies=const.PROXIES,
+        timeout=const.REQ_TIMEOUT
+    )
+    soup_search = BeautifulSoup(res_search.content, 'lxml')
+
+    content_tag = soup_search.find('div', id='nowplaying')
+    if not content_tag:
+        return []
+    # 搜索列表
+    list_tag = content_tag.find('ul', class_='lists')
+    if not list_tag:
+        return []
+    douban_id_list = []
+    # 电影详情信息
+    for li_tag in content_tag.find_all('li', class_='list-item'):
+        douban_id = li_tag.attrs.get('id', '')
+        if not douban_id:
+            continue
+        app.send_task('tasks.movie.crawl_movie_detail', args=(douban_id,))
+        douban_id_list.append(douban_id)
+    return douban_id_list
