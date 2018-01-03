@@ -5,6 +5,9 @@
 #
 # Created: 2017/12/25 下午7:09
 
+from celery import chain
+
+from tasks import movie
 from tasks.workers import app
 
 
@@ -32,8 +35,16 @@ def get_movie_detail(douban_id):
     app.send_task('tasks.movie.crawl_movie_detail', args=(douban_id,))
 
 
+def get_douban_nowplaying_detail():
+    """
+    获取豆瓣正在上映的电影详情列表
+    :return:
+    """
+    chain(
+        movie.crawl_nowplaying_id_list.s(),
+        movie.crawl_movie_detail_by_group.s())()
+
+
 if __name__ == '__main__':
-    # get_nowplaying_detail()
-    # get_nowplaying_detail_list()
-    douban_id = '27011205'
-    get_movie_detail(douban_id)
+    get_nowplaying_detail()
+    get_douban_nowplaying_detail()

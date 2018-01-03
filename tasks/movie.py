@@ -7,6 +7,7 @@
 
 import requests
 from bs4 import BeautifulSoup
+from celery import group
 
 from common import const
 from core import douban
@@ -20,7 +21,17 @@ def crawl_movie_detail(douban_id):
     :param douban_id:
     :return:
     """
-    douban.crawl_movie_detail(douban_id)
+    return douban.crawl_movie_detail(douban_id)
+
+
+@app.task()
+def crawl_movie_detail_by_group(douban_id_list):
+    """
+    根据电影id获取电影详情信息
+    :param douban_id_list:
+    :return:
+    """
+    group(crawl_movie_detail.s(douban_id) for douban_id in douban_id_list)()
 
 
 @app.task()
