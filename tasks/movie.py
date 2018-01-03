@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from common import const
+from core import douban
 from tasks.workers import app
 
 
@@ -19,54 +20,16 @@ def crawl_movie_detail(douban_id):
     :param douban_id:
     :return:
     """
-    subject_url = const.SUBJECT_URL.format(douban_id)
-    movie_detail = {
-        'douban_id': douban_id,
-        'title': '',
-        'director': '',
-        'actors': [],
-        'imdb': ''
-    }
-    # 获取电影详情页
-    try:
-        res_page = requests.get(
-            subject_url,
-            headers=const.HEADERS,
-            proxies=const.PROXIES,
-            timeout=const.REQ_TIMEOUT
-        )
-    except TimeoutError:
-        print(u'豆瓣电影详情无法访问')
-        return movie_detail
+    douban.crawl_movie_detail(douban_id)
 
-    # 电影信息
-    soup_movie = BeautifulSoup(res_page.content, 'lxml')
-    content = soup_movie.find('div', id='content')
-    if not content:
-        return movie_detail
-    # 片名
-    title_tag = content.find('span', property='v:itemreviewed')
-    if title_tag:
-        movie_detail['title'] = title_tag.get_text()
-    # 电影详情
-    clearfix = content.find('div', class_='subject clearfix')
-    if not clearfix:
-        return movie_detail
-    # 导演
-    director_tag = clearfix.find(rel='v:directedBy')
-    if director_tag:
-        movie_detail['director'] = director_tag.get_text()
-    # 主演
-    for actor_tag in clearfix.find_all(rel='v:starring'):
-        actor = actor_tag.get_text()
-        if not actor:
-            continue
-        movie_detail['actors'].append(actor)
-    # IMDb链接
-    imdb_tag = clearfix.find('a', rel='nofollow')
-    if imdb_tag:
-        movie_detail['imdb'] = imdb_tag.attrs.get('href', '')
-    return movie_detail
+
+@app.task()
+def crawl_nowplaying_id_list():
+    """
+    爬取正在热映的电影豆瓣id列表
+    :return:
+    """
+    return douban.crawl_nowplaying_id_list()
 
 
 @app.task()
