@@ -8,6 +8,7 @@
 HOST = 'https://movie.douban.com'
 SEARCH_URL = 'https://movie.douban.com/cinema/nowplaying'
 SUBJECT_URL = 'https://movie.douban.com/subject/{}'
+SEARCH_SUBJECT_URL = 'https://movie.douban.com/j/search_subjects?type=movie&tag={}&sort={}&page_limit={}&page_start={}'
 REQ_TIMEOUT = 5
 PROXIES = {'http': '110.88.31.99:808'}
 HEADERS = {

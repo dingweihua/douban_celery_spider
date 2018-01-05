@@ -42,6 +42,7 @@ app.conf.update(
     ),
     CELERY_ROUTES={
         'tasks.movie.crawl_nowplaying_id_list': {'queue': 'celery', 'routing_key': 'celery'},
+        'tasks.movie.douban_get_subject_id_list': {'queue': 'celery', 'routing_key': 'celery'},
         'tasks.movie.crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},
         'tasks.movie.group_crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},
     }

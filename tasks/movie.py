@@ -38,3 +38,16 @@ def crawl_nowplaying_id_list():
     :return:
     """
     return douban.crawl_nowplaying_id_list()
+
+
+@app.task()
+def douban_get_subject_id_list(tag, sort, page_start, page_limit):
+    """
+    按照subject获取豆瓣id列表
+    :param tag:
+    :param sort:
+    :param page_start:
+    :param page_limit:
+    :return:
+    """
+    return douban.get_subject_id_list(tag, sort, page_start, page_limit)

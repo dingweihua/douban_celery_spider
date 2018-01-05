@@ -96,3 +96,30 @@ def crawl_movie_detail(douban_id):
     if imdb_tag:
         movie_detail['imdb'] = imdb_tag.attrs.get('href', '')
     return movie_detail
+
+
+def get_subject_id_list(tag, sort='recommend', page_start=0, page_limit=20):
+    """
+    豆瓣 按照subject爬取id列表
+    :param tag:
+    :param sort:
+    :param page_start:
+    :param page_limit:
+    :return:
+    """
+    search_url = const.SEARCH_SUBJECT_URL.format(
+        tag, sort, page_limit, page_start
+    )
+    print(search_url)
+    res_search = requests.get(
+        search_url,
+        headers=const.HEADERS,
+        proxies=const.PROXIES,
+        timeout=const.REQ_TIMEOUT
+    )
+    if res_search.status_code != 200:
+        return []
+    res_info = res_search.json()
+    print(res_info)
+    return list(filter(None, [
+        subject.get('id', '') for subject in res_info.get('subjects', [])]))
