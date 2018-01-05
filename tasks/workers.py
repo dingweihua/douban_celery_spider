@@ -10,7 +10,7 @@ from kombu import Queue, Exchange
 
 import config
 
-broker = 'amqp://myuser:password@127.0.0.1/myvhost'
+broker = 'amqp://myuser:password@127.0.0.1:5672/myvhost'
 backend = 'redis://127.0.0.1:6379/0'
 tasks = [
     'tasks.movie',
@@ -41,7 +41,6 @@ app.conf.update(
         ),
     ),
     CELERY_ROUTES={
-        'tasks.movie.crawling_nowplaying': {'queue': 'celery', 'routing_key': 'celery'},
         'tasks.movie.crawl_nowplaying_id_list': {'queue': 'celery', 'routing_key': 'celery'},
         'tasks.movie.crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},
         'tasks.movie.group_crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},

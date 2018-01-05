@@ -11,14 +11,6 @@ from tasks import movie
 from tasks.workers import app
 
 
-def get_nowplaying_detail():
-    """
-    获取正在上映的电影详情列表
-    :return:
-    """
-    app.send_task('tasks.movie.crawl_nowplaying')
-
-
 def get_nowplaying_detail_list():
     """
     获取正在上映的电影详情列表
@@ -46,5 +38,4 @@ def get_douban_nowplaying_detail():
 
 
 if __name__ == '__main__':
-    get_nowplaying_detail()
     get_douban_nowplaying_detail()
