@@ -110,7 +110,6 @@ def get_subject_id_list(tag, sort='recommend', page_start=0, page_limit=20):
     search_url = const.SEARCH_SUBJECT_URL.format(
         tag, sort, page_limit, page_start
     )
-    print(search_url)
     res_search = requests.get(
         search_url,
         headers=const.HEADERS,
@@ -120,6 +119,5 @@ def get_subject_id_list(tag, sort='recommend', page_start=0, page_limit=20):
     if res_search.status_code != 200:
         return []
     res_info = res_search.json()
-    print(res_info)
     return list(filter(None, [
         subject.get('id', '') for subject in res_info.get('subjects', [])]))

@@ -5,9 +5,9 @@
 #
 # Created: 2017/12/25 下午7:11
 
-from celery import group
+from celery import group, chain
 
-from core import douban
+from core import douban, bttiantangs, ed2k
 from tasks.workers import app
 
 
@@ -51,3 +51,56 @@ def douban_get_subject_id_list(tag, sort, page_start, page_limit):
     :return:
     """
     return douban.get_subject_id_list(tag, sort, page_start, page_limit)
+
+
+@app.task()
+def douban_get_movie_resource_by_group(douban_id_list):
+    """
+    grpup: 根据豆瓣电影id获取电影下载资源
+    :param douban_id_list:
+    :return:
+    """
+    group(douban_get_movie_resource.s(
+        douban_id) for douban_id in douban_id_list)()
+
+
+@app.task()
+def douban_get_movie_resource(douban_id):
+    """
+    根据豆瓣电影id获取电影下载资源
+    :param douban_id:
+    :return:
+    """
+    chain(crawl_movie_detail.s(douban_id),
+          get_multi_movie_resource_by_group.s())()
+
+
+@app.task()
+def get_multi_movie_resource_by_group(movie_info):
+    """
+    grpup: 获取多个电影资源网站上的下载资源
+    :param movie_info:
+    :return:
+    """
+    group(bt_get_movie_resource.s(movie_info),
+          ed2k_get_movie_resource.s(movie_info))()
+
+
+@app.task()
+def bt_get_movie_resource(movie_info):
+    """
+    bt天堂：根据电影信息获取电影下载资源
+    :param movie_info:
+    :return:
+    """
+    return bttiantangs.crawl_movie_resources(movie_info)
+
+
+@app.task()
+def ed2k_get_movie_resource(movie_info):
+    """
+    ed2k：根据电影信息获取电影下载资源
+    :param movie_info:
+    :return:
+    """
+    return ed2k.crawl_movie_resources(movie_info)

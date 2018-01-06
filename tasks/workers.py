@@ -39,11 +39,26 @@ app.conf.update(
             exchange=Exchange('movie_detail', type='direct'),
             routing_key='movie_detail'
         ),
+        Queue(
+            name='bt',
+            exchange=Exchange('bt', type='direct'),
+            routing_key='bt'
+        ),
+        Queue(
+            name='ed2k',
+            exchange=Exchange('ed2k', type='direct'),
+            routing_key='ed2k'
+        ),
     ),
     CELERY_ROUTES={
         'tasks.movie.crawl_nowplaying_id_list': {'queue': 'celery', 'routing_key': 'celery'},
         'tasks.movie.douban_get_subject_id_list': {'queue': 'celery', 'routing_key': 'celery'},
         'tasks.movie.crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},
         'tasks.movie.group_crawl_movie_detail': {'queue': 'movie_detail', 'routing_key': 'movie_detail'},
+        'tasks.movie.douban_get_movie_resource_by_group': {'queue': 'celery', 'routing_key': 'celery'},
+        'tasks.movie.douban_get_movie_resource': {'queue': 'celery', 'routing_key': 'celery'},
+        'tasks.movie.get_multi_movie_resource_by_group': {'queue': 'celery', 'routing_key': 'celery'},
+        'tasks.movie.bt_get_movie_resource': {'queue': 'bt', 'routing_key': 'bt'},
+        'tasks.movie.ed2k_get_movie_resource': {'queue': 'ed2k', 'routing_key': 'ed2k'},
     }
 )
