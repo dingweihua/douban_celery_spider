@@ -16,7 +16,11 @@ REQ_TIMEOUT = 10
 ED2K_HOST = 'http://www.ed2000.com'
 ED2K_SEARCH_URL = 'http://www.ed2000.com/FileList.asp'
 
-PROXIES = {'http': '180.118.242.220:61234'}
+# lbldy
+LBLDY_HOST = 'http://www.lbldy.com'
+LBLDY_SEARCH_URL = 'http://www.lbldy.com/search'
+
+PROXIES = {'http': '27.151.56.233:8118'}
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
     'Connection': 'keep-alive',

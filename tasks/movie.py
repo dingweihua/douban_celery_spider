@@ -7,7 +7,7 @@
 
 from celery import group, chain
 
-from core import douban, bttiantangs, ed2k
+from core import douban, bttiantangs, ed2k, lbldy
 from tasks.workers import app
 
 
@@ -83,6 +83,7 @@ def get_multi_movie_resource_by_group(movie_info):
     :return:
     """
     group(bt_get_movie_resource.s(movie_info),
+          lbldy_get_movie_resource.s(movie_info),
           ed2k_get_movie_resource.s(movie_info))()
 
 
@@ -104,3 +105,13 @@ def ed2k_get_movie_resource(movie_info):
     :return:
     """
     return ed2k.crawl_movie_resources(movie_info)
+
+
+@app.task()
+def lbldy_get_movie_resource(movie_info):
+    """
+    lbldy：根据电影信息获取电影下载资源
+    :param movie_info:
+    :return:
+    """
+    return lbldy.crawl_movie_resources(movie_info)
